@@ -59,15 +59,34 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={pending}
-            className="w-full rounded bg-black px-4 py-2 text-white disabled:opacity-50"
+            className="w-full rounded px-4 py-2 text-white disabled:opacity-50"
+            style={{
+              background: "#a52a2a",
+              border: "1px solid #5a2a2a",
+              fontSize: 15,
+              fontWeight: 600,
+              cursor: pending ? "not-allowed" : "pointer",
+            }}
           >
             {pending ? t("login.btnSubmitting") : t("login.btnSubmit")}
           </button>
         </form>
 
-        <p className="text-sm text-gray-500">
+        <p className="text-sm" style={{ color: "#8a7a65" }}>
           {t("login.noAccount")}{" "}
-          <Link href="/register" className="text-black underline">
+          <Link
+            href="/register"
+            style={{
+              color: "#c9a961",
+              fontWeight: 600,
+              textDecoration: "none",
+              border: "1px solid #c9a961",
+              borderRadius: 4,
+              padding: "2px 10px",
+              display: "inline-block",
+              marginLeft: 4,
+            }}
+          >
             {t("login.linkRegister")}
           </Link>
         </p>
