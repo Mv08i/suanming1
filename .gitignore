@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# IDE internal (Trae memory/docs — project-private, never commit)
+.trae/
+
+# local screenshots
+screenshots/

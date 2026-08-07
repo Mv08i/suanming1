@@ -1,0 +1,226 @@
+// OpenAI 兼容客户端。支持 OpenAI 官方 API 或任何兼容格式的（智谱 / Groq / DeepSeek 等）。
+// 没配 API_KEY 时自动走本地 mock 回退（保证扣费链路可测）。
+
+export type ChatMessage = {
+  role: "system" | "user" | "assistant";
+  content: string;
+};
+
+/** 流式 chunk：通过 async generator 逐个 yield 给调用方 */
+export type ChatStreamYield =
+  | { type: "delta"; content: string }
+  | { type: "done"; inputTokens: number; outputTokens: number; model: string }
+  | { type: "error"; message: string };
+
+/** 判断是否应该走 mock（没配 key，或 key 还是占位符） */
+function shouldUseMock(): boolean {
+  const key = (process.env.OPENAI_API_KEY ?? "").trim();
+  if (!key) return true;
+  // 占位符检查：任何含 "FILL" 或 "YOUR" 或 "PLACEHOLDER" 的 key 都视为未配置
+  const upper = key.toUpperCase();
+  if (upper.includes("FILL") || upper.includes("YOUR") || upper.includes("PLACEHOLDER")) return true;
+  return false;
+}
+
+/**
+ * 非流式聊天：输入 messages 数组，返回完整回复字符串
+ * - 配了 OPENAI_API_KEY → 调真实接口
+ * - 没配（或占位符） → 返回 mock 回复（带 echo 你的提问），不扣真钱，保证链路可测
+ */
+export async function createChatCompletion(params: {
+  messages: ChatMessage[];
+  model?: string;
+  signal?: AbortSignal;
+}): Promise<{ content: string; inputTokens: number; outputTokens: number; model: string }> {
+  const apiKey = process.env.OPENAI_API_KEY;
+  const baseUrl = process.env.OPENAI_BASE_URL ?? "https://api.openai.com/v1";
+  const model = params.model ?? process.env.OPENAI_MODEL ?? "gpt-4o-mini";
+
+  if (shouldUseMock()) {
+    // Mock 回退
+    const userMsgs = params.messages.filter((m) => m.role === "user").map((m) => m.content);
+    const last = userMsgs[userMsgs.length - 1] ?? "";
+    const content = `[Mock AI 回复（未配置 OPENAI_API_KEY，使用本地模拟）]\n\n你说的是：「${last.slice(0, 200)}」\n\n这里是一段模拟的 AI 回复内容。在生产环境配置 OPENAI_API_KEY 后，会调用真实大模型接口。`;
+    return {
+      content,
+      inputTokens: [...last].length,
+      outputTokens: [...content].length,
+      model: "mock-echo",
+    };
+  }
+
+  const resp = await fetch(`${baseUrl}/chat/completions`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      model,
+      messages: params.messages,
+      stream: false,
+    }),
+    signal: params.signal,
+  });
+
+  if (!resp.ok) {
+    const errText = await resp.text().catch(() => "");
+    throw new Error(`AI API error ${resp.status}: ${errText.slice(0, 300)}`);
+  }
+
+  const data = (await resp.json()) as {
+    choices: { message: { content: string } }[];
+    usage?: { prompt_tokens?: number; completion_tokens?: number };
+    model?: string;
+  };
+
+  const content = data.choices?.[0]?.message?.content ?? "";
+  const inputTokens = data.usage?.prompt_tokens ?? 0;
+  const outputTokens = data.usage?.completion_tokens ?? 0;
+
+  return { content, inputTokens, outputTokens, model: data.model ?? model };
+}
+
+/**
+ * 流式聊天：async generator，逐个 yield ChatStreamYield
+ *
+ * - 配了 OPENAI_API_KEY → 真实 OpenAI stream（SSE 协议，解析 data: 行）
+ * - 没配 → mock 按词切块流式发送，模拟打字机效果
+ *
+ * 用法：
+ *   for await (const chunk of createChatCompletionStream({...})) {
+ *     if (chunk.type === "delta") sendToClient(chunk.content);
+ *     if (chunk.type === "done") finalize(chunk.inputTokens, chunk.outputTokens);
+ *     if (chunk.type === "error") handleError(chunk.message);
+ *   }
+ */
+export async function* createChatCompletionStream(params: {
+  messages: ChatMessage[];
+  model?: string;
+  signal?: AbortSignal;
+}): AsyncGenerator<ChatStreamYield, void, unknown> {
+  const apiKey = process.env.OPENAI_API_KEY;
+  const baseUrl = process.env.OPENAI_BASE_URL ?? "https://api.openai.com/v1";
+  const model = params.model ?? process.env.OPENAI_MODEL ?? "gpt-4o-mini";
+
+  // ===== Mock 流式：按词切块，模拟打字机 =====
+  if (shouldUseMock()) {
+    const userMsgs = params.messages.filter((m) => m.role === "user").map((m) => m.content);
+    const last = userMsgs[userMsgs.length - 1] ?? "";
+    const fullContent = `[Mock AI 流式回复（未配置 OPENAI_API_KEY）]
+
+你说的是：「${last.slice(0, 200)}」
+
+这是一段模拟的 AI 流式回复。生产环境配置 OPENAI_API_KEY 后会调用真实大模型。当前模式下按词切块发送，方便测试 SSE 渲染效果（打字机动画）。`;
+
+    // 按空格/换行切词，每块 4-6 字符
+    const tokens = fullContent.match(/\S+\s*|\s+/g) ?? [fullContent];
+    let outputTokens = 0;
+    for (const tok of tokens) {
+      // 模拟网络延迟（30-80ms）
+      await new Promise((r) => setTimeout(r, 30 + Math.random() * 50));
+      outputTokens += [...tok].length;
+      yield { type: "delta", content: tok };
+    }
+    yield { type: "done", inputTokens: [...last].length, outputTokens, model: "mock-echo" };
+    return;
+  }
+
+  // ===== 真实流式（OpenAI 兼容，含智谱 AI） =====
+  let resp: Response;
+  try {
+    const body: Record<string, unknown> = {
+      model,
+      messages: params.messages,
+      stream: true,
+    };
+    // 注：智谱等部分厂商不支持 stream_options.include_usage，
+    // 因此默认不发送；若调用方显式开启，可以通过环境变量控制。
+    if (process.env.AI_STREAM_USAGE === "1") {
+      body.stream_options = { include_usage: true };
+    }
+    resp = await fetch(`${baseUrl}/chat/completions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify(body),
+      signal: params.signal,
+    });
+  } catch (err) {
+    yield { type: "error", message: err instanceof Error ? err.message : "网络请求失败" };
+    return;
+  }
+
+  if (!resp.ok) {
+    const errText = await resp.text().catch(() => "");
+    yield { type: "error", message: `AI API error ${resp.status}: ${errText.slice(0, 300)}` };
+    return;
+  }
+
+  if (!resp.body) {
+    yield { type: "error", message: "AI API 返回空 body" };
+    return;
+  }
+
+  // 解析 SSE：按 \n\n 分块，每块以 "data: " 开头
+  const reader = resp.body.getReader();
+  const decoder = new TextDecoder();
+  let buf = "";
+  let inputTokens = 0;
+  let outputTokens = 0;
+  let actualModel = model;
+
+  try {
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buf += decoder.decode(value, { stream: true });
+
+      let idx: number;
+      while ((idx = buf.indexOf("\n\n")) >= 0) {
+        const block = buf.slice(0, idx);
+        buf = buf.slice(idx + 2);
+
+        // block 内多行，取 "data:" 行
+        const lines = block.split("\n");
+        for (const rawLine of lines) {
+          const line = rawLine.trim();
+          if (!line.startsWith("data:")) continue;
+          const payload = line.slice(5).trim();
+          if (payload === "[DONE]") {
+            yield { type: "done", inputTokens, outputTokens, model: actualModel };
+            return;
+          }
+          try {
+            const evt = JSON.parse(payload) as {
+              choices?: {
+                delta?: { content?: string | null; reasoning_content?: string | null };
+                finish_reason?: string | null;
+              }[];
+              usage?: { prompt_tokens?: number; completion_tokens?: number; total_tokens?: number };
+              model?: string;
+            };
+            if (evt.model) actualModel = evt.model;
+            if (evt.usage?.prompt_tokens) inputTokens = evt.usage.prompt_tokens;
+            if (evt.usage?.completion_tokens) outputTokens = evt.usage.completion_tokens;
+            const delta = evt.choices?.[0]?.delta?.content;
+            if (delta) {
+              outputTokens += [...delta].length; // fallback：若没 usage 也能估算
+              yield { type: "delta", content: delta };
+            }
+            // reasoning_content（部分模型的思考过程）忽略，不计入可见输出
+          } catch {
+            // 单行解析失败跳过，不影响后续
+          }
+        }
+      }
+    }
+    // 流自然结束（没收到 [DONE]）：也算成功
+    yield { type: "done", inputTokens, outputTokens, model: actualModel };
+  } catch (err) {
+    yield { type: "error", message: err instanceof Error ? err.message : "流读取失败" };
+  }
+}
+
