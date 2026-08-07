@@ -92,6 +92,7 @@ export const DICT = {
   "interp.btnStop": { zh: "停止", en: "Stop" },
   "interp.btnStart": { zh: "开始解卦（扣 5 积分）", en: "Start reading (5 credits)" },
   "interp.btnRestart": { zh: "重新解卦", en: "Read again" },
+  "interp.thinking": { zh: "AI 思考中", en: "AI is thinking" },
   "interp.meta": { zh: "模型 {model} · 扣 {credits} 积分 · 余额 {balance}", en: "Model {model} · {credits} credits · Balance {balance}" },
   "interp.doneMeta": { zh: "完成 · 输入 {in} / 输出 {out} token · 余额 {balance}", en: "Done · in {in} / out {out} tokens · balance {balance}" },
 

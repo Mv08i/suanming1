@@ -56,7 +56,7 @@ export default function InterpretPanel({ interp, onStart, ready, title }: Props)
         </div>
       )}
 
-      {state.content && (
+      {(state.content || state.loading) && (
         <div
           style={{
             whiteSpace: "pre-wrap",
@@ -66,10 +66,18 @@ export default function InterpretPanel({ interp, onStart, ready, title }: Props)
             background: "rgba(0,0,0,0.25)",
             borderRadius: 6,
             border: "1px solid #3a2a1f",
+            minHeight: 48,
           }}
         >
           {state.content}
-          {state.loading && <span style={cursorStyle}>▍</span>}
+          {!state.content && state.loading && (
+            <span style={{ color: "#8a7a65", fontSize: 13 }}>
+              {t("interp.thinking")}…
+            </span>
+          )}
+          {state.loading && (
+            <span style={{ ...cursorStyle, color: "#c9a961", marginLeft: 2 }}>|</span>
+          )}
         </div>
       )}
 
