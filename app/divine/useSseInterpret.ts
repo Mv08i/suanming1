@@ -27,12 +27,13 @@ function parseSseBuffer(buf: string): { events: SseEvent[]; rest: string } {
   const events: SseEvent[] = [];
   let rest = buf;
   let idx: number;
-  while ((idx = rest.indexOf("\n\n")) >= 0) {
+  while ((idx = findSseBoundary(rest)) >= 0) {
+    const sepLen = rest.startsWith("\r\n\r\n", idx) ? 4 : 2;
     const block = rest.slice(0, idx);
-    rest = rest.slice(idx + 2);
+    rest = rest.slice(idx + sepLen);
     let event = "message";
     const dataLines: string[] = [];
-    for (const line of block.split("\n")) {
+    for (const line of block.split(/\r?\n/)) {
       if (line.startsWith("event:")) event = line.slice(6).trim();
       else if (line.startsWith("data:")) dataLines.push(line.slice(5).trim());
     }
@@ -41,6 +42,15 @@ function parseSseBuffer(buf: string): { events: SseEvent[]; rest: string } {
     }
   }
   return { events, rest };
+}
+
+/** 兼容 \r\n\r\n 和 \n\n 的 SSE 块边界查找 */
+function findSseBoundary(buf: string): number {
+  const idx4 = buf.indexOf("\r\n\r\n");
+  const idx2 = buf.indexOf("\n\n");
+  if (idx4 < 0) return idx2;
+  if (idx2 < 0) return idx4;
+  return Math.min(idx4, idx2);
 }
 
 export interface InterpretState {

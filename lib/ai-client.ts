@@ -1,6 +1,15 @@
 // OpenAI 兼容客户端。支持 OpenAI 官方 API 或任何兼容格式的（智谱 / Groq / DeepSeek 等）。
 // 没配 API_KEY 时自动走本地 mock 回退（保证扣费链路可测）。
 
+/** 兼容 \r\n\r\n 和 \n\n 的 SSE 块边界查找 */
+function findSseBoundary(buf: string): number {
+  const idx4 = buf.indexOf("\r\n\r\n");
+  const idx2 = buf.indexOf("\n\n");
+  if (idx4 < 0) return idx2;
+  if (idx2 < 0) return idx4;
+  return Math.min(idx4, idx2);
+}
+
 export type ChatMessage = {
   role: "system" | "user" | "assistant";
   content: string;
@@ -133,6 +142,7 @@ export async function* createChatCompletionStream(params: {
       model,
       messages: params.messages,
       stream: true,
+      max_tokens: 4096,
     };
     // 注：智谱等部分厂商不支持 stream_options.include_usage，
     // 因此默认不发送；若调用方显式开启，可以通过环境变量控制。
@@ -164,7 +174,7 @@ export async function* createChatCompletionStream(params: {
     return;
   }
 
-  // 解析 SSE：按 \n\n 分块，每块以 "data: " 开头
+  // 解析 SSE：兼容 \n\n 和 \r\n\r\n 两种分隔符
   const reader = resp.body.getReader();
   const decoder = new TextDecoder();
   let buf = "";
@@ -178,13 +188,15 @@ export async function* createChatCompletionStream(params: {
       if (done) break;
       buf += decoder.decode(value, { stream: true });
 
+      // 同时匹配 \r\n\r\n 和 \n\n，优先处理 \r\n\r\n
       let idx: number;
-      while ((idx = buf.indexOf("\n\n")) >= 0) {
+      while ((idx = findSseBoundary(buf)) >= 0) {
+        const sepLen = buf.startsWith("\r\n\r\n", idx) ? 4 : 2;
         const block = buf.slice(0, idx);
-        buf = buf.slice(idx + 2);
+        buf = buf.slice(idx + sepLen);
 
-        // block 内多行，取 "data:" 行
-        const lines = block.split("\n");
+        // block 内多行，取 "data:" 行，兼容 \r\n 行结束
+        const lines = block.split(/\r?\n/);
         for (const rawLine of lines) {
           const line = rawLine.trim();
           if (!line.startsWith("data:")) continue;

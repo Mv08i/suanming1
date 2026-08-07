@@ -18,20 +18,13 @@ function sse(event: string, data: unknown): string {
 }
 
 /**
- * Vercel / 部分 CDN 对 SSE 流有缓冲阈值（~1-4KB），
- * 前几个小事件会被整包等待导致客户端看不到打字机效果。
- * 开头发一堆注释行（SSE 规范里 ":" 开头是注释，客户端忽略），
- * 让响应体立即超过阈值触发 flush。
+ * Vercel / 部分 CDN 对 SSE 流有缓冲阈值。
+ * 发几行 SSE 注释（":" 开头，客户端忽略）触发 flush。
+ * 每行 80 字节 x 5 行 = 400 字节，足以绕过大多数缓冲。
  */
 function warmupPad(): string {
-  // 4KB 注释（每一行": ..."共约 128 字节，32 行 ≈ 4KB）
-  const padLine =
-    ":" +
-    "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcd".repeat(
-      2,
-    ) +
-    "\n";
-  return padLine.repeat(32);
+  const line = ":" + "x".repeat(78) + "\n";
+  return line.repeat(5);
 }
 
 export interface InterpretParams {
