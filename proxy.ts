@@ -1,21 +1,52 @@
 import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import NextAuth from "next-auth";
-
 import { authConfig } from "@/lib/auth.config";
 
-// NextAuth 实例（只用不含 Prisma 的 authConfig，保证 Edge Runtime 可用）
 const { auth } = NextAuth(authConfig);
 
-// Next.js 16: middleware 约定改名为 proxy，必须 export function（不能是 const 解构）
-// auth 作为 middleware 在运行时接受 NextRequest，这里用类型断言对齐 Auth.js 的重载签名
+const PROTECTED_PREFIXES = ["/dashboard", "/chat"];
+
 export async function proxy(request: NextRequest) {
-  return (auth as unknown as (req: NextRequest) => Promise<unknown>)(request);
+  const { pathname } = request.nextUrl;
+
+  // 静态资源 / API 路由 / NextAuth 内部路由直接放行
+  if (
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/api") ||
+    pathname === "/favicon.ico" ||
+    pathname.startsWith("/auth") ||
+    pathname.startsWith("/static") ||
+    /\.(svg|png|jpg|jpeg|gif|ico|css|js|woff2?|ttf|eot)$/.test(pathname)
+  ) {
+    return NextResponse.next();
+  }
+
+  // 只对受保护路由做 auth 检查
+  const isProtected = PROTECTED_PREFIXES.some(
+    (r) => pathname === r || pathname.startsWith(r + "/")
+  );
+
+  if (isProtected) {
+    try {
+      const session = await auth(request);
+      if (!session?.user) {
+        const loginUrl = new URL("/login", request.url);
+        loginUrl.searchParams.set("callbackUrl", pathname);
+        return NextResponse.redirect(loginUrl);
+      }
+    } catch {
+      const loginUrl = new URL("/login", request.url);
+      loginUrl.searchParams.set("callbackUrl", pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+  }
+
+  return NextResponse.next();
 }
 
-// 受保护路径：未登录会被重定向到 /login
-// - /dashboard 控制台
-// - /chat AI 对话
-// 注意：/divine/* 公开可浏览（游客可见），起卦/解卦 API 自身校验登录，未登录返回 401 由前端跳 /login
 export const config = {
-  matcher: ["/dashboard/:path*", "/chat"],
+  matcher: [
+    "/((?!_next|api|auth|favicon.ico|static|.*\\.(?:svg|png|jpg|jpeg|gif|ico|css|js|woff2?|ttf|eot)$).*)",
+  ],
 };
