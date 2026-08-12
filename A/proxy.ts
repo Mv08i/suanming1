@@ -47,7 +47,11 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
+  // 只匹配需要认证的路由，公开页面（/login, /register, /privacy, /terms, /）绕过中间件以支持 Vercel CDN 缓存
   matcher: [
-    "/((?!_next|api|auth|favicon.ico|static|.*\\.(?:svg|png|jpg|jpeg|gif|ico|css|js|woff2?|ttf|eot)$).*)",
+    "/dashboard/:path*",
+    "/chat/:path*",
+    "/divine/:path*",
+    "/credits/:path*",
   ],
 };
