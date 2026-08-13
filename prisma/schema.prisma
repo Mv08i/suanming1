@@ -143,7 +143,7 @@ model AiRequest {
   @@map("ai_requests")
 }
 
-// 算命记录（每次起卦+解卦对应一行，存结构化卦象与历史）
+// 命理咨询记录（每次起卦+解卦对应一行，存结构化卦象与历史）
 model DivinationRecord {
   id          String   @id @default(cuid())
   userId      String

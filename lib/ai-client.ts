@@ -181,6 +181,9 @@ export async function* createChatCompletionStream(params: {
   let inputTokens = 0;
   let outputTokens = 0;
   let actualModel = model;
+  // 兼容部分厂商（如智谱）每个 chunk 给完整 message.content 的模式：
+  // 用 lastEmittedContent 记录已发送的前缀，yield 差分（新增尾部）
+  let lastEmittedContent = "";
 
   try {
     while (true) {
@@ -209,6 +212,7 @@ export async function* createChatCompletionStream(params: {
             const evt = JSON.parse(payload) as {
               choices?: {
                 delta?: { content?: string | null; reasoning_content?: string | null };
+                message?: { content?: string | null };
                 finish_reason?: string | null;
               }[];
               usage?: { prompt_tokens?: number; completion_tokens?: number; total_tokens?: number };
@@ -217,10 +221,30 @@ export async function* createChatCompletionStream(params: {
             if (evt.model) actualModel = evt.model;
             if (evt.usage?.prompt_tokens) inputTokens = evt.usage.prompt_tokens;
             if (evt.usage?.completion_tokens) outputTokens = evt.usage.completion_tokens;
-            const delta = evt.choices?.[0]?.delta?.content;
-            if (delta) {
-              outputTokens += [...delta].length; // fallback：若没 usage 也能估算
-              yield { type: "delta", content: delta };
+
+            // 兼容：优先 delta.content（增量），回退 message.content（完整内容）
+            const deltaContent = evt.choices?.[0]?.delta?.content;
+            const messageContent = evt.choices?.[0]?.message?.content;
+            const rawContent: string | undefined =
+              deltaContent ?? messageContent ?? undefined;
+
+            if (rawContent) {
+              // 如果前面已经发过内容且 rawContent 是完整前缀模式，
+              // 则取 rawContent 去除已发送前缀的部分作为增量
+              if (lastEmittedContent && rawContent.startsWith(lastEmittedContent)) {
+                const inc = rawContent.slice(lastEmittedContent.length);
+                if (inc) {
+                  outputTokens += [...inc].length; // fallback 估算
+                  yield { type: "delta", content: inc };
+                  lastEmittedContent = rawContent;
+                }
+              } else {
+                // 纯增量模式或首个 chunk，直接 yield rawContent
+                outputTokens += [...rawContent].length; // fallback 估算
+                yield { type: "delta", content: rawContent };
+                lastEmittedContent =
+                  messageContent !== undefined ? rawContent : lastEmittedContent + rawContent;
+              }
             }
             // reasoning_content（部分模型的思考过程）忽略，不计入可见输出
           } catch {

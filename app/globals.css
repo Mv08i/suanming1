@@ -26,9 +26,9 @@ body {
 }
 
 /* ===== 移动端适配（< 640px） =====
-   算命页用内联样式，这里通过 className + !important 在小屏覆盖。 */
+   命理咨询页用内联样式，这里通过 className + !important 在小屏覆盖。 */
 @media (max-width: 640px) {
-  /* 算命 header：允许换行、收紧间距 */
+  /* 命理咨询 header：允许换行、收紧间距 */
   .divine-header-inner {
     flex-wrap: wrap !important;
     gap: 8px !important;
@@ -59,7 +59,7 @@ body {
     font-size: 20px !important;
     letter-spacing: 3px !important;
   }
-  /* 算命主体收紧内边距 */
+  /* 命理咨询主体收紧内边距 */
   .divine-main {
     padding: 16px 12px !important;
   }
@@ -108,7 +108,7 @@ body {
     padding-left: 14px !important;
     padding-right: 14px !important;
   }
-  /* 算命历史/卦象卡片在小屏内边距收紧（history-list 复用 cardStyle） */
+  /* 命理咨询历史/卦象卡片在小屏内边距收紧（history-list 复用 cardStyle） */
   .divine-card,
   .history-card {
     padding: 12px !important;

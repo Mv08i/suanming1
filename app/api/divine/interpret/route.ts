@@ -80,7 +80,7 @@ export async function POST(req: Request) {
     messages,
     model: body.model,
     category,
-    description: `算命(${typeName})`,
+    description: `命理咨询(${typeName})`,
     onDone: async ({ requestId, fullContent }) => {
       await prisma.divinationRecord.update({
         where: { id: record.id },

@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "BuWei · AI 算命",
-  description: "AI-powered Chinese divination — Liu Yao, Plum Blossom & Qi Men Dun Jia.",
+  title: "BuWei · AI 命理咨询",
+  description: "AI Destiny Consultation — Liu Yao, Plum Blossom & Qi Men Dun Jia. Traditional Chinese metaphysics, modern AI interpretation.",
 };
 
 export const viewport: Viewport = {

@@ -38,7 +38,7 @@ export default function HistoryList({ records }: { records: DivRecord[] }) {
         </h2>
         <p style={{ fontSize: 13, color: "#8a7a65", marginTop: 6 }}>
           {isZh
-            ? `最近 ${records.length} 条记录。点击「再算」可重新起卦。`
+            ? `最近 ${records.length} 条记录。点击「再起一卦」可重新起卦。`
             : `${records.length} recent records. Click an entry to cast again.`}
         </p>
       </div>

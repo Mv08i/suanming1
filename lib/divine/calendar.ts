@@ -1,5 +1,5 @@
 // tyme4ts 封装：统一提供农历/节气/干支/时辰信息
-// 三类算命算法共用，避免重复计算干支。
+// 三类命理咨询算法共用，避免重复计算干支。
 //
 // 已验证 API（scripts/test-tyme.mjs）：
 //   SolarDay.fromYmd(y,m,d) → solarDay

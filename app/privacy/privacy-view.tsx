@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import LegalShell, { LegalSection } from "../legal-shell";
 import { useLocale, useT } from "../i18n/context";
@@ -17,7 +17,7 @@ const CONTENT: Record<"en" | "zh", { title: string; sections: Section[] }> = {
       {
         title: "1. Introduction",
         paragraphs: [
-          `${SITE.brandEn} ("we") respects and protects your privacy by law. This policy explains how we collect, use, store, and protect your personal information when you use this website and our AI divination, AI chat, and credit recharge services.`,
+          `${SITE.brandEn} ("we") respects and protects your privacy by law. This policy explains how we collect, use, store, and protect your personal information when you use this website and our AI destiny consultation, AI chat, and credit recharge services.`,
           `By using the service, you consent to the data practices described in this policy. If you do not agree, please stop using the service.`,
         ],
       },
@@ -25,7 +25,7 @@ const CONTENT: Record<"en" | "zh", { title: string; sections: Section[] }> = {
         title: "2. Information We Collect",
         list: [
           "Account information: email address and optional nickname provided at registration. Passwords are stored as one-way bcrypt hashes; we cannot recover the plaintext.",
-          "Usage records: your AI chat content, divination casts and readings, credit transactions, and recharge orders — used to deliver the service and for audit.",
+          "Usage records: your AI chat content, consultation casts and readings, credit transactions, and recharge orders — used to deliver the service and for audit.",
           "Payment information: recharge payments are processed by Creem. We do not store full bank card numbers; only order IDs and transaction IDs are retained for reconciliation and support.",
           "Technical logs: access IP, browser type, access time, request logs — used for security and troubleshooting.",
         ],
@@ -33,7 +33,7 @@ const CONTENT: Record<"en" | "zh", { title: string; sections: Section[] }> = {
       {
         title: "3. How We Use Information",
         list: [
-          "Provide AI chat and divination (Liu Yao, Plum Blossom, Qi Men Dun Jia) services, deducting credits per use.",
+          "Provide AI chat and destiny consultation (Liu Yao, Plum Blossom, Qi Men Dun Jia) services, deducting credits per use.",
           "Process credit recharges, order reconciliation, and refunds (where applicable).",
           "Maintain login sessions and authentication.",
           "Security, anti-fraud, and service stability.",
@@ -47,7 +47,7 @@ const CONTENT: Record<"en" | "zh", { title: string; sections: Section[] }> = {
         ],
         list: [
           "Creem: payment processing for recharge transactions.",
-          "AI service providers: receive your chat and divination input to generate AI responses.",
+          "AI service providers: receive your chat and consultation input to generate AI responses.",
           "Neon: PostgreSQL database hosting for user and business data.",
           "Vercel: application hosting and CDN for website access.",
         ],
@@ -111,7 +111,7 @@ const CONTENT: Record<"en" | "zh", { title: string; sections: Section[] }> = {
       {
         title: "一、引言",
         paragraphs: [
-          `${SITE.brand}（以下简称“我们”）尊重并依法保护用户隐私。本政策说明我们在你使用本网站及 AI 算命、AI 对话、积分充值等服务时，如何收集、使用、存储与保护你的个人信息。`,
+          `${SITE.brand}（以下简称“我们”）尊重并依法保护用户隐私。本政策说明我们在你使用本网站及 AI 命理咨询、AI 对话、积分充值等服务时，如何收集、使用、存储与保护你的个人信息。`,
           "使用本服务即表示你同意本隐私政策所述的信息处理方式。如你不同意，请停止使用本服务。",
         ],
       },
@@ -119,7 +119,7 @@ const CONTENT: Record<"en" | "zh", { title: string; sections: Section[] }> = {
         title: "二、我们收集的信息",
         list: [
           "账户信息：注册时提供的邮箱地址、昵称（可选）。密码经 bcrypt 单向哈希存储，我们无法获取明文。",
-          "使用记录：你的 AI 对话内容、算命起卦与解卦记录、积分流水、充值订单等，用于提供服务与审计。",
+          "使用记录：你的 AI 对话内容、命理咨询起卦与解读记录、积分流水、充值订单等，用于提供服务与审计。",
           "支付信息：充值支付由 Creem 处理，我们不存储完整银行卡号，仅保留订单号与交易 ID 用于对账与售后。",
           "技术日志：访问 IP、浏览器类型、访问时间、请求日志等，用于安全防护与故障排查。",
         ],
@@ -127,7 +127,7 @@ const CONTENT: Record<"en" | "zh", { title: string; sections: Section[] }> = {
       {
         title: "三、我们如何使用信息",
         list: [
-          "提供 AI 对话与算命（六爻、梅花易数、奇门遁甲）服务，并按次扣减积分。",
+          "提供 AI 对话与命理咨询（六爻、梅花易数、奇门遁甲）服务，并按次扣减积分。",
           "处理积分充值、订单核对与退款（如适用）。",
           "维持登录会话与身份认证。",
           "安全防护、反欺诈与服务稳定性保障。",
@@ -141,7 +141,7 @@ const CONTENT: Record<"en" | "zh", { title: string; sections: Section[] }> = {
         ],
         list: [
           "Creem：支付处理服务，处理充值交易。",
-          "AI 服务提供商：接收你输入的对话与算卦内容，用于生成 AI 回复。",
+          "AI 服务提供商：接收你输入的对话与咨询内容，用于生成 AI 回复。",
           "Neon：PostgreSQL 数据库托管服务，存储用户与业务数据。",
           "Vercel：应用托管与 CDN 服务，提供网站访问。",
         ],

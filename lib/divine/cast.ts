@@ -37,6 +37,6 @@ export function performCast(req: CastRequest, date: Date = new Date()): AnyCast 
       return castQiMen(cal, req.question);
     }
     default:
-      throw new Error(`未知算命类型: ${(req as { type: string }).type}`);
+      throw new Error(`未知咨询类型: ${(req as { type: string }).type}`);
   }
 }

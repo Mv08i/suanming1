@@ -19,10 +19,10 @@ export const DICT = {
   "nav.login": { zh: "登录 / 注册", en: "Sign in / Sign up" },
   "nav.balance": { zh: "余额", en: "Balance" },
 
-  // ===== 算命首页 =====
+  // ===== 命理咨询首页 =====
   "divine.home.subtitle": {
-    zh: "AI 智能解卦 · 六爻 · 梅花易数 · 奇门遁甲 · 起卦问事，尽得玄机",
-    en: "AI-powered Chinese divination — Liu Yao, Plum Blossom & Qi Men Dun Jia. Cast your hexagram, get your reading.",
+    zh: "AI 命理咨询 · 六爻 · 梅花易数 · 奇门遁甲 · 东方哲学，卦象解读",
+    en: "AI Destiny Consultation — Liu Yao, Plum Blossom & Qi Men Dun Jia. Cast your hexagram, get your reading.",
   },
   "divine.home.introsTitle": { zh: "三式介绍", en: "Three Methods Intro" },
   "divine.home.introLabel": { zh: "介绍", en: "Intro" },
@@ -31,8 +31,8 @@ export const DICT = {
   "divine.liuyao.tag": { zh: "铜钱起卦", en: "Coin Cast" },
   "divine.liuyao.title": { zh: "六爻", en: "Liu Yao" },
   "divine.liuyao.desc": {
-    zh: "摇铜钱六次成卦，纳甲六亲、世应动爻，断所问之事吉凶。",
-    en: "Shake six coins to form a hexagram; uses Na Jia, Six Relations, and moving lines to judge fortune.",
+    zh: "摇铜钱六次成卦，纳甲六亲、世应动爻，观所问之事趋势。",
+    en: "Shake six coins to form a hexagram; uses Na Jia, Six Relations, and moving lines to read life trends.",
   },
   "divine.meihua.tag": { zh: "时间/数字", en: "Time/Number" },
   "divine.meihua.title": { zh: "梅花易数", en: "Plum Blossom" },
@@ -50,12 +50,12 @@ export const DICT = {
   // ===== 六爻起卦页 =====
   "liuyao.heading": { zh: "六爻起卦", en: "Liu Yao Casting" },
   "liuyao.hint": {
-    zh: "摇铜钱六次（初→上）成卦；或切到「手动选卦」直接点选爻象。起卦免费，AI 解卦扣 5 积分。",
+    zh: "摇铜钱六次（初→上）成卦；或切到「手动选卦」直接点选爻象。起卦免费，AI 解读扣 5 积分。",
     en: "Shake six coins (bottom to top) to cast; or switch to Manual to pick lines directly. Casting is free; AI reading costs 5 credits.",
   },
   "liuyao.questionPlaceholder": {
-    zh: "所问之事（可选，如：问近期财运）",
-    en: "Your question (optional, e.g. recent fortune)",
+    zh: "所问之事（可选，如：问近期事业方向）",
+    en: "Your question (optional, e.g. recent career direction)",
   },
   "liuyao.tabShake": { zh: "摇铜钱", en: "Shake Coins" },
   "liuyao.tabManual": { zh: "手动选卦", en: "Manual" },
@@ -87,11 +87,11 @@ export const DICT = {
   "gua.palaceSuffix": { zh: "宫", en: " palace" },
   "gua.daySuffix": { zh: "日", en: "" },
 
-  // ===== AI 解卦面板 =====
-  "interp.title": { zh: "AI 解卦", en: "AI Reading" },
+  // ===== AI 卦象解读面板 =====
+  "interp.title": { zh: "AI 卦象解读", en: "AI Reading" },
   "interp.btnStop": { zh: "停止", en: "Stop" },
-  "interp.btnStart": { zh: "开始解卦（扣 5 积分）", en: "Start reading (5 credits)" },
-  "interp.btnRestart": { zh: "重新解卦", en: "Read again" },
+  "interp.btnStart": { zh: "开始解读（扣 5 积分）", en: "Start reading (5 credits)" },
+  "interp.btnRestart": { zh: "重新解读", en: "Read again" },
   "interp.thinking": { zh: "AI 思考中", en: "AI is thinking" },
   "interp.meta": { zh: "模型 {model} · 扣 {credits} 积分 · 余额 {balance}", en: "Model {model} · {credits} credits · Balance {balance}" },
   "interp.doneMeta": { zh: "完成 · 输入 {in} / 输出 {out} token · 余额 {balance}", en: "Done · in {in} / out {out} tokens · balance {balance}" },
@@ -116,7 +116,7 @@ export const DICT = {
   // ===== 梅花易数页 =====
   "meihua.heading": { zh: "梅花易数", en: "Plum Blossom Divination" },
   "meihua.hint": {
-    zh: "选时间起卦或输入数字起卦，得本卦、互卦、变卦与体用分析。起卦免费，AI 解卦扣 5 积分。",
+    zh: "选时间起卦或输入数字起卦，得本卦、互卦、变卦与体用分析。起卦免费，AI 解读扣 5 积分。",
     en: "Cast by time or by number; yields primary, mutual, changed hexagrams and Ti-Yong analysis. Casting is free; AI reading costs 5 credits.",
   },
   "meihua.tabTime": { zh: "时间起卦", en: "By Time" },
@@ -128,7 +128,7 @@ export const DICT = {
   // ===== 奇门遁甲页 =====
   "qimen.heading": { zh: "奇门遁甲", en: "Qi Men Dun Jia" },
   "qimen.hint": {
-    zh: "以当前时辰起盘（简化体验版）。起盘免费，AI 解卦扣 5 积分。",
+    zh: "以当前时辰起盘（简化体验版）。起盘免费，AI 解读扣 5 积分。",
     en: "Arranges a chart by current hour (simplified edition). Charting is free; AI reading costs 5 credits.",
   },
   "qimen.btnCast": { zh: "起盘", en: "Draw Chart" },
@@ -145,9 +145,9 @@ export const DICT = {
   "qimen.hourLabel": { zh: "时", en: "Hour" },
 
   // ===== 历史页 =====
-  "history.title": { zh: "算命历史", en: "Divination History" },
+  "history.title": { zh: "咨询历史", en: "Consultation History" },
   "history.empty": { zh: "暂无记录", en: "No records yet" },
-  "history.btnRecast": { zh: "再算一卦", en: "Cast again" },
+  "history.btnRecast": { zh: "再起一卦", en: "Cast again" },
   "history.colTime": { zh: "时间", en: "Time" },
   "history.colType": { zh: "类型", en: "Type" },
   "history.colQuestion": { zh: "所问", en: "Question" },
@@ -212,7 +212,7 @@ export const DICT = {
   "credits.redirecting": { zh: "跳转支付中…", en: "Redirecting to checkout…" },
   "credits.backDashboard": { zh: "← 返回控制台", en: "← Back to dashboard" },
   "credits.success.title": { zh: "充值成功", en: "Payment successful" },
-  "credits.success.body": { zh: "积分已到账，可继续使用 AI 对话或算命。", en: "Credits added. You can continue using AI chat or divination." },
+  "credits.success.body": { zh: "积分已到账，可继续使用 AI 对话或命理咨询。", en: "Credits added. You can continue using AI chat or destiny consultation." },
   "credits.success.back": { zh: "返回控制台", en: "Back to dashboard" },
 
   // ===== 对话页 =====

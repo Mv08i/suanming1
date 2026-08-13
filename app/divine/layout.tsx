@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth";
 import DivineHeader from "./divine-header";
 
 export const metadata = {
-  title: "卜微 · AI 算命",
+  title: "卜微 · AI 命理咨询",
   description: "六爻 · 梅花易数 · 奇门遁甲",
 };
 
@@ -11,7 +11,7 @@ export default async function DivineLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // 游客可浏览算命页；起卦/解卦 API 自身校验登录，未登录返回 401 由前端跳 /login
+  // 游客可浏览命理咨询页；起卦/解卦 API 自身校验登录，未登录返回 401 由前端跳 /login
   const session = await auth();
 
   return (

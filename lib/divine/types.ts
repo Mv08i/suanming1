@@ -1,4 +1,4 @@
-// 算命功能共享类型定义
+// 命理咨询功能共享类型定义
 
 export type DivinationType = "LIUYAO" | "MEIHUA" | "QIMEN";
 

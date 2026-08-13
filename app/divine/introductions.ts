@@ -1,5 +1,5 @@
-// 三式算命的详细介绍内容（双语：zh / en）
-// 用于 /divine 分类页与各算命页介绍区
+// 三式命理咨询的详细介绍内容（双语：zh / en）
+// 用于 /divine 分类页与各咨询页介绍区
 
 export interface DivineIntro {
   fullName: string;
@@ -14,21 +14,21 @@ export type DivineIntros = Record<"LIUYAO" | "MEIHUA" | "QIMEN", { zh: DivineInt
 export const DIVINE_INTROS: DivineIntros = {
   LIUYAO: {
     zh: {
-      fullName: "六爻预测法（纳甲法 / 火珠林）",
+      fullName: "六爻命理法（纳甲法 / 火珠林）",
       origin:
-        "源于西汉京房易，完善于唐宋，是周易预测的重要分支，民间俗称「摇卦」。以铜钱代蓍，简化古法而体系严密。",
+        "源于西汉京房易，完善于唐宋，是周易命理的重要分支，民间俗称「摇卦」。以铜钱代蓍，简化古法而体系严密。",
       principle:
-        "以三枚铜钱摇掷六次，自下而上成初、二、三、四、五、上六爻。依铜钱正反得老阴(6)、少阳(7)、少阴(8)、老阳(9)四象，组成本卦与变卦。再配纳甲（天干地支）、六亲（父母、兄弟、子孙、妻财、官鬼）、六神（青龙、朱雀、勾陈、腾蛇、白虎、玄武）、世应，以用神与动爻生克断吉凶。",
-      suitable: "具体之事的吉凶成败，如财运、婚姻、事业、考试、失物、出行、疾病等。",
-      feature: "断事具体细致，体系严密，以动爻与用神生克为核心，重实事实断。",
+        "以三枚铜钱摇掷六次，自下而上成初、二、三、四、五、上六爻。依铜钱正反得老阴(6)、少阳(7)、少阴(8)、老阳(9)四象，组成本卦与变卦。再配纳甲（天干地支）、六亲（父母、兄弟、子孙、妻财、官鬼）、六神（青龙、朱雀、勾陈、腾蛇、白虎、玄武）、世应，以用神与动爻生克观察趋势方向。",
+      suitable: "具体之事的趋势参考，如事业、婚姻、财运、考试、失物、出行、健康等。",
+      feature: "观察具体细致，体系严密，以动爻与用神生克为核心，重现实分析。",
     },
     en: {
       fullName: "Liu Yao (Na Jia / Coin Casting)",
       origin:
-        "Originated from Jing Fang of the Western Han, refined through the Tang and Song. A major branch of Zhou Yi prediction, colloquially called 'coin shaking'. Uses coins in place of yarrow stalks, simplifying the ancient method while keeping a rigorous system.",
+        "Originated from Jing Fang of the Western Han, refined through the Tang and Song. A major branch of Zhou Yi study, colloquially called 'coin shaking'. Uses coins in place of yarrow stalks, simplifying the ancient method while keeping a rigorous system.",
       principle:
-        "Three coins are shaken six times to form six lines (bottom to top). Each throw yields one of four states: Old Yin (6), Young Yang (7), Young Yin (8), or Old Yang (9), composing the primary and changed hexagrams. Lines are then assigned Na Jia (heavenly stems & earthly branches), Six Relations (Parents, Brothers, Children, Wealth, Officials), Six Spirits (Azure Dragon, Vermilion Bird, Hooked Chen, Flying Serpent, White Tiger, Black Warrior), and Shi/Ying positions. Fortune is judged from the Yong (focus) line and moving lines' interactions.",
-      suitable: "Specific questions of fortune: wealth, marriage, career, exams, lost items, travel, illness, etc.",
+        "Three coins are shaken six times to form six lines (bottom to top). Each throw yields one of four states: Old Yin (6), Young Yang (7), Young Yin (8), or Old Yang (9), composing the primary and changed hexagrams. Lines are then assigned Na Jia (heavenly stems & earthly branches), Six Relations (Parents, Brothers, Children, Wealth, Officials), Six Spirits (Azure Dragon, Vermilion Bird, Hooked Chen, Flying Serpent, White Tiger, Black Warrior), and Shi/Ying positions. Patterns are read from the Yong (focus) line and moving lines' interactions.",
+      suitable: "Life trends and guidance: career, marriage, wealth, exams, lost items, travel, health, etc.",
       feature: "Concrete and detailed; rigorous system centered on moving lines and Yong-Shen interactions.",
     },
   },
